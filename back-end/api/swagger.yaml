@@ -1,0 +1,360 @@
+---
+swagger: "2.0"
+info:
+    description: "# This is API for the Municipality Webserver"
+    version: "1.0.0"
+    title: "Government - Municipality Office API"
+    contact:
+        email: "arturomanzaneda@gmail.com"
+basePath: "/api"
+schemes:
+- "http"
+consumes:
+- "application/json"
+produces:
+- "application/json"
+paths:
+    /bsn:
+        get:
+            tags:
+            - "Citizens"
+            summary: "Get all BSN numbers"
+            operationId: "getAllBsn"
+            parameters: []
+            responses:
+                200:
+                    description: "Successful operation"
+                    schema:
+                        type: "array"
+                        description: "All BSN numbers"
+                        items:
+                            type: "integer"
+                            example: 123456789
+                500:
+                    description: "Internal Server Error"
+                    schema:
+                        $ref: "#/definitions/Error"
+            x-swagger-router-controller: "Citizens"
+    /citizens/{bsn}:
+        get:
+            tags:
+            - "Citizens"
+            summary: "Get Citizen all personal data"
+            operationId: "getCitizensDetailsByBsn"
+            parameters:
+            - name: "bsn"
+              in: "path"
+              description: "Social Security Number in the Netherlands (Burger Service Nummer)"
+              required: true
+              type: "integer"
+            responses:
+                200:
+                    description: "Successful operation"
+                    schema:
+                        $ref: "#/definitions/CitizenDetails"
+                500:
+                    description: "Internal Server Error"
+                    schema:
+                        $ref: "#/definitions/Error"
+            x-swagger-router-controller: "Citizens"
+    /connections:
+        post:
+            tags:
+            - "Indy"
+            summary: "Generate Connection Offer for the given citizen"
+            operationId: "newConnectionOffer"
+            parameters:
+            - name: "bsn"
+              in: "query"
+              description: "BSN number from citizen"
+              required: true
+              type: "integer"
+            - in: "body"
+              name: "body"
+              description: "Empty body payload"
+              required: false
+              schema:
+                  type: "object"
+            responses:
+                201:
+                    description: "Created New Connection Offer"
+                    schema:
+                        $ref: "#/definitions/QRCodePayload"
+                    headers:
+                        Location:
+                            type: "string"
+                            format: "url"
+                            description: "URI to located back the connection offer"
+                500:
+                    description: "Internal Server Error"
+                    schema:
+                        $ref: "#/definitions/Error"
+            x-swagger-router-controller: "Indy"
+    /connections/{myDid}:
+        get:
+            tags:
+            - "Indy"
+            summary: "Get connection details by my DID"
+            operationId: "getConnectionDetailsByMyDid"
+            parameters:
+            - name: "myDid"
+              in: "path"
+              description: "DID of the citizen (shared reference between Government & Node API)"
+              required: true
+              type: "string"
+            responses:
+                200:
+                    description: "Successful operation"
+                    schema:
+                        type: "object"
+                        description: "Connection Status"
+                        properties: {}
+                500:
+                    description: "Internal Server Error"
+                    schema:
+                        $ref: "#/definitions/Error"
+            x-swagger-router-controller: "Indy"
+    /credentials:
+        get:
+            tags:
+            - "Indy"
+            summary: "Get all credentials offers available in Indy API for citizens"
+            operationId: "getCredentialsList"
+            parameters: []
+            responses:
+                200:
+                    description: "Successfully "
+                    schema:
+                        $ref: "#/definitions/Credentials"
+                500:
+                    description: "Internal Server Error"
+                    schema:
+                        $ref: "#/definitions/Error"
+            x-swagger-router-controller: "Indy"
+        post:
+            tags:
+            - "Indy"
+            summary: "Send credential to citizen"
+            operationId: "sendCredentialsToCitizen"
+            parameters:
+            - in: "body"
+              name: "body"
+              description: ""
+              required: true
+              schema:
+                  $ref: "#/definitions/SendCredentialsToCitizen"
+            responses:
+                200:
+                    description: "Successfully generated offer and sent it to citizen (Not ensures\
+            \ the credentials are received by citizen or accepted)"
+                500:
+                    description: "Internal Server Error"
+                    schema:
+                        $ref: "#/definitions/Error"
+            x-swagger-router-controller: "Indy"
+    /credentials/{schemaName}/{schemaVersion}/{myDid}:
+        get:
+            tags:
+            - "Indy"
+            summary: "Get Citizen Passport Credentials data mapped to schema keys"
+            operationId: "getCitizensCredentials"
+            parameters:
+            - name: "myDid"
+              in: "path"
+              description: "MyDid to connect to the citizen"
+              required: true
+              type: "string"
+            - name: "schemaName"
+              in: "path"
+              description: "Credential Schema Name"
+              required: true
+              type: "string"
+            - name: "schemaVersion"
+              in: "path"
+              description: "Credential Schema Version"
+              required: true
+              type: "string"
+            responses:
+                200:
+                    description: "Successful operation"
+                    schema:
+                        type: "object"
+                        description: "Credential Values mapped to the keys from the requested Schema (The Schema needs to be known by the Web application)"
+                        properties: {}
+                500:
+                    description: "Internal Server Error"
+                    schema:
+                        $ref: "#/definitions/Error"
+            x-swagger-router-controller: "Indy"
+definitions:
+    Error:
+        type: "object"
+        properties:
+            message:
+                type: "string"
+    QRCodePayload:
+        type: "object"
+        properties:
+            did:
+                type: "string"
+                description: "Government DID"
+            verkey:
+                type: "string"
+                description: "Government Verkey"
+            baseUrl:
+                type: "string"
+                description: "Government Base path, expected to be stored by the client using\
+          \ indy API setEndpoint for DID"
+            path:
+                type: "string"
+                description: "Resource location for sending the client response"
+            method:
+                type: "string"
+                description: "HTTP Method expected for the response of the client"
+            name:
+                type: "string"
+                description: "Trust Anchor's name, can be used by the client to identify"
+        example:
+            name: "Government"
+            did: "D1atq2dTH6j8kRBsjqVurs"
+            verkey: "UgFbqy3d273UdYL8ztzAtPUgFbqy3d273UdYL8ztzAtP"
+            baseUrl: "http://localhost:8081/api"
+            path: "/dids/D1atq2dTH6j8kRBsjqVurs"
+            method: "PUT"
+            token: "xxxxxx.yyyyyyy.zzzzzz"
+    SendCredentialsToCitizen:
+        type: "object"
+        properties:
+            myDid:
+                type: "string"
+                description: "Government DID, My DID"
+            credDefId:
+                type: "string"
+                description: "Credential Definition Id"
+            schemaName:
+                type: "string"
+            schemaVersion:
+                type: "string"
+        required:
+            - myDid
+            - credDefId
+            - schemaName
+            - schemaVersion
+        example:
+            did: "UgFbqy3d273UdYL8ztzAtP"
+            credDefId: "Th7MpTaRZVRYnPiabds81Y:3:CL:24:TAG1"
+            schemaName: "Passport"
+            schemaVersion: "1.0"
+    CitizenDetails:
+        type: "object"
+        properties:
+            address:
+                type: "string"
+                example: "9582 Jansen straat Apt. 156 Lunteren Amber aan de Rijn"
+            bsn:
+                type: "number"
+                example: 129874488
+            code:
+                type: "string"
+                example: "NLD"
+            dateOfBirth:
+                type: "number"
+                example: 262569600
+                description: "Unix time (in seconds)"
+            dateOfLastCredentialOffer:
+                type: "number"
+                example: 1528705095
+                description: "Unix time (in seconds)"
+            gender:
+                type: "string"
+                example: "Female"
+            givenName:
+                type: "string"
+                example: "Bas"
+            surname:
+                type: "string"
+                example: "Visser"
+            imageUrl:
+                type: "string"
+                example: "https://images-na.ssl-images-amazon.com/images/M/MV5BMzUyNjY5MDE3NF5BMl5BanBnXkFtZTgwMjMzNDYzODE@._V1_UX172_CR0,0,172,256_AL_.jpg"
+            nationality:
+                type: "string"
+                example: "Nederlandse"
+            passportAuthority:
+                type: "string"
+                example: "Gemeente Amsterdam"
+            passportDateOfExpiry:
+                type: "number"
+                example: 1843862400
+            passportDateOfIssue:
+                type: "number"
+                example: 1528502400
+            passportNumber:
+                type: "string"
+                example: "467795341"
+            placeOfBirth:
+                type: "string"
+                example: "5391 Mulder straat Apt. 637 Terwolde Eva"
+            governmentDid:
+                type: "string"
+                example: "UgFbqy3d273UdYL8ztzAtP"
+            citizenDid:
+                type: "string"
+                example: "UgFbqy3d273UdYL8ztzAtP"
+            dateOfDidOnboarding:
+                type: "number"
+                example: 1528705095
+                description: "Unix time (in seconds)"
+        description: "Citizen Data"
+        example:
+            nationality: "Nederlandse"
+            surname: "Visser"
+            placeOfBirth: "5391 Mulder straat Apt. 637 Terwolde Eva"
+            givenName: "Bas"
+            governmentDid: "GUByAHinLgf6nNtF7YjAnQ"
+            passportDateOfExpiry: 1843862400
+            passportDateOfIssue: 1528502400
+            dateOfLastCredentialOffer: 1528705095
+            code: "NLD"
+            dateOfDidOnboarding: 1528705095
+            citizenDid: "UgFbqy3d273UdYL8ztzAtP"
+            passportAuthority: "Gemeente Amsterdam"
+            passportNumber: "467795341"
+            address: "9582 Jansen straat Apt. 156 Lunteren Amber aan de Rijn"
+            gender: "Female"
+            bsn: 129874488
+            dateOfBirth: 262569600
+            imageUrl: "https://images-na.ssl-images-amazon.com/images/M/MV5BMzUyNjY5MDE3NF5BMl5BanBnXkFtZTgwMjMzNDYzODE@._V1_UX172_CR0,0,172,256_AL_.jpg"
+    Credentials:
+        type: "object"
+        properties:
+            credentials:
+                $ref: "#/definitions/Credentials_credentials"
+        example:
+            credentials:
+                type: "object"
+                properties:
+                    name: "Passport"
+                    schema: "PassportSchemaId:MyTADID"
+                    credentialDefinition: "PassportCredDefId:MyTADID"
+                    revocation: true
+                    version: "1.0"
+                    status: "Active"
+    Credentials_credentials:
+        properties:
+            name:
+                type: "string"
+            schema:
+                type: "string"
+            credentialDefinition:
+                type: "string"
+            revocation:
+                type: "boolean"
+            version:
+                type: "string"
+            status:
+                type: "string"
+                enum:
+                - "Unactive"
+                - "Active"
+                - "Deprecated"

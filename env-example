@@ -1,0 +1,24 @@
+#
+# Government Webapp example environment file / variables documentation
+# Rename this to .env if you want to use it or create your own.
+#
+
+# Government
+# ===============================================
+
+## host and port at which the API is reachable
+API_HOST=172.18.0.4
+API_PORT=8000
+
+GOV_HOST=172.18.0.5
+GOV_PORT=8090
+GOV_START_UP_INTERVAL=5000
+GOV_SEED=0000000000000000000000Government
+GOV_DID=Th7MpTaRZVRYnPiabds81Y
+GOV_USER=government
+GOV_PASSWORD=dummy
+GOV_WALLET=governmentWallet
+GOV_WALLET_KEY=dummy
+GOV_NAME=Government
+GOV_DESCRIPTION=Government
+GOV_LOGO_URL=http://eit-dev.westeurope.cloudapp.azure.com:8090/img/icons/android-chrome-512x512.png
