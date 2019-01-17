@@ -1,4 +1,6 @@
-<img src="../docs/logo.png" width="50%" align="right" />
+<img src="https://id-chain.github.io/square-logo300x300.png" align="left" height="140px" style="margin-right: 30px;" />
+
+# IdentityChain Government Legacy Example
 
 ## Run Government Webserver & UI application
 
