@@ -88,7 +88,7 @@ exports.newConnectionOffer = async function(bsn) {
                 name: `${process.env.GOV_NAME || 'Government'}`,
                 description: `${process.env.GOV_DESCRIPTION || 'Example Government'}`,
                 logoUrl: `${process.env.GOV_LOGO_URL ||
-                    'http://40.68.131.169:8090/img/icons/android-chrome-192x192.png'}`
+                    'http://23.97.243.176:8090/img/icons/android-chrome-192x192.png'}`
             }
         });
         if (response && response.data && response.data.meta) {
@@ -208,20 +208,27 @@ async function createSchemaAndCredentialDefinition() {
         return true;
     });
     if (userPassportSchemas.length === 0) {
-        // Create 2 schemas: with and without revocations
-        await axios.post('/schema', {
-            name: PASSPORT_SCHEMA_NAME,
-            version: '1.0',
-            createCredentialDefinition: true,
-            isRevocable: false,
-            attributes: PASSPORT_SCHEMA_FIELDS_SUBMIT
-        });
-        await axios.post('/schema', {
-            name: PASSPORT_SCHEMA_NAME,
-            version: '1.1',
-            createCredentialDefinition: true,
-            isRevocable: true,
-            attributes: PASSPORT_SCHEMA_FIELDS_SUBMIT
-        });
+        try {
+            // Create 2 schemas: with and without revocations
+            await axios.post('/schema', {
+                name: PASSPORT_SCHEMA_NAME,
+                version: '1.0',
+                createCredentialDefinition: true,
+                isRevocable: false,
+                attributes: PASSPORT_SCHEMA_FIELDS_SUBMIT
+            });
+            await axios.post('/schema', {
+                name: PASSPORT_SCHEMA_NAME,
+                version: '1.1',
+                createCredentialDefinition: true,
+                isRevocable: true,
+                attributes: PASSPORT_SCHEMA_FIELDS_SUBMIT
+            });
+        } catch (e) {
+            log.info("Error while creating schema, probably related to a Shutdown of the API without reboot of the ledger.");
+            log.info("Please use the Admin UI portal to create schemas for the government");
+            log.error(e);
+        }
+
     }
 }
