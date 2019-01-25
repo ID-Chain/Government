@@ -1,24 +1,66 @@
-#
-# Government Webapp example environment file / variables documentation
-# Rename this to .env if you want to use it or create your own.
-#
+##
+##     ________  ________  _____    _____   __
+##    /  _/ __ \/ ____/ / / /   |  /  _/ | / /
+##    / // / / / /   / /_/ / /| |  / //  |/ /
+##  _/ // /_/ / /___/ __  / ___ |_/ // /|  /
+## /___/_____/\____/_/ /_/_/  |_/___/_/ |_/
+##
+##
+## -------> Government Legacy Web Server
+##
+## Please copy this file into a new file with name .env,
+## and adjust the following variables to match your environment
+## ↓↓↓↓
 
-# Government
-# ===============================================
+## ------------------------------------------------------------------------------------
+## IEA API Host & Port
+## Default values by NodeJS code: api:8000
+## ↓↓↓↓-------------------------------------------------------------------------------
 
-## host and port at which the API is reachable
-API_HOST=172.18.0.4
-API_PORT=8000
+IDC_API_HOST=172.16.0.100
+IDC_API_PORT=8000
+
+## ------------------------------------------------------------------------------------
+## Government Host & Port
+## Required (no default values)
+## ↓↓↓↓-------------------------------------------------------------------------------
 
 GOV_HOST=172.18.0.5
 GOV_PORT=8090
-GOV_START_UP_INTERVAL=5000
-GOV_SEED=0000000000000000000000Government
+
+## ------------------------------------------------------------------------------------
+## Government DID & Seed
+## Please see test-pool in (Common repository) for more information
+## ↓↓↓↓-------------------------------------------------------------------------------
+
 GOV_DID=Th7MpTaRZVRYnPiabds81Y
+GOV_SEED=0000000000000000000000Government
+
+## ------------------------------------------------------------------------------------
+## Government IEA API User & Wallet parameters
+## ↓↓↓↓-------------------------------------------------------------------------------
+
 GOV_USER=government
 GOV_PASSWORD=dummy
 GOV_WALLET=governmentWallet
 GOV_WALLET_KEY=dummy
+
+## ------------------------------------------------------------------------------------
+## Government Extra info used by mobile app (shared in connection offer messages)
+## Default values in NodeJS code (as defined here)
+## ↓↓↓↓-------------------------------------------------------------------------------
+
 GOV_NAME=Government
-GOV_DESCRIPTION=Government
-GOV_LOGO_URL=http://eit-dev.westeurope.cloudapp.azure.com:8090/img/icons/android-chrome-512x512.png
+GOV_DESCRIPTION=Example Government
+GOV_LOGO_URL=http://23.97.243.176:8090/img/icons/android-chrome-512x512.png
+
+## ------------------------------------------------------------------------------------
+## Start Up delay (in milliseconds)
+## Used to introduce a delay before interacting with the IEA API
+## This interaction on bootstrap create:
+##  - User & Wallet
+##  - Schema (Passport)
+##  - Credential Definitions & Revocation Registries
+## ↓↓↓↓-------------------------------------------------------------------------------
+
+GOV_START_UP_INTERVAL=5000

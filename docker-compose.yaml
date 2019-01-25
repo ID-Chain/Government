@@ -1,16 +1,25 @@
 version: '3'
 
 services:
-  nginx:
-    build:
-      context: .
-    image: idchain/admin-ui
-    container_name: idchain-admin-ui
-    ports:
-      - 8080:${NGINX_PORT-80}
-    environment:
-      - NGINX_HOST=${NGINX_HOST-localhost}
-      - NGINX_PORT=${NGINX_PORT-80}
-      - IDC_API_DOMAIN_PROTOCOL=${IDC_API_DOMAIN_PROTOCOL-http}
-      - IDC_API_DOMAIN_HOST=${IDC_API_DOMAIN_HOST-127.0.0.1}
-      - IDC_API_DOMAIN_PORT=${IDC_API_DOMAIN_PORT-8000}
+    legacy-government:
+        build:
+            context: .
+        image: idchain/legacy-goverment
+        container_name: idchain-legacy-goverment
+        ports:
+            - ${GOV_PORT-8090}:${GOV_PORT-8090}
+        environment:
+            - IDC_API_HOST=${IDC_API_HOST-172.16.0.100}
+            - IDC_API_PORT=${IDC_API_PORT-8000}
+            - GOV_HOST=${GOV_HOST-172.16.0.101}
+            - GOV_PORT=${GOV_PORT-8090}
+            - GOV_DID=${GOV_DID-Th7MpTaRZVRYnPiabds81Y}
+            - GOV_SEED=${GOV_SEED-0000000000000000000000Government}
+            - GOV_USER=${GOV_USER-government}
+            - GOV_PASSWORD=${GOV_PASSWORD-dummy}
+            - GOV_WALLET=${GOV_WALLET-governmentWallet}
+            - GOV_WALLET_KEY=${GOV_WALLET_KEY-dummy}
+            - GOV_NAME
+            - GOV_DESCRIPTION
+            - GOV_LOGO_URL
+            - GOV_START_UP_INTERVAL=${GOV_START_UP_INTERVAL-5000}

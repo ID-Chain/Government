@@ -8,7 +8,7 @@ const { PASSPORT_SCHEMA_NAME, PASSPORT_SCHEMA_FIELDS, PASSPORT_SCHEMA_FIELDS_SUB
 const governmentBaseUrl = `http://${process.env.GOV_HOST}:${process.env.GOV_PORT}/api`;
 
 const axios = require('axios').create({
-    baseURL: `http://${process.env.API_HOST || 'api'}:${process.env.API_PORT || '8000'}/api`,
+    baseURL: `http://${process.env.IDC_API_HOST || 'api'}:${process.env.IDC_API_PORT || '8000'}/api`,
     timeout: process.env.REQUESTS_TIMEOUT || 60000
 });
 
